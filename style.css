@@ -12,14 +12,11 @@ body {
 }
 
 h2 {
-  /* font-family: monospace, "Courier New", Consolas, "Lucida Console"; */
   font-family: myFont;
   /* color: #f1a1ff; */
   color: lightgray;
   font-size: 2rem;
   margin-bottom: 1rem;
-
-
 }
 
 @font-face {
