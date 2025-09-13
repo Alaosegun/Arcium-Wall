@@ -74,8 +74,8 @@ button {
 }
 
 #box {
-  /* width: 95vw;
-  height: 71vh; */
+  width: 95vw;
+  height: 71vh;
   background: rgba(0, 0, 0, 0.6);
   border: 2px solid #6b46c1;
   border-radius: 12px;
@@ -173,7 +173,7 @@ button {
     /* max-height: 100vh; */
     /* min-height: 60vh; keeps some height */
     border-radius: 8px;
-    height: 100dvh;
+    height: 90dvh;
   }
 
   .avatar {
