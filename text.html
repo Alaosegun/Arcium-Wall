@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Floating Twitter Wall</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <video autoplay muted loop playsinline class="background-video">
+    <source src="./67086aa28c40f80ff00c0af1_Homepage Hero-transcode.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div id="form">
+    <div class="logo">
+      <img src="./Screenshot 2025-09-12 at 10.49.46 PM.png" alt="">
+    </div>
+    <div class="header_text">
+      <h2>&lt;ENCRYPTED&gt; WALL</h2>
+      <div>
+        <input id="handle" type="text" placeholder="@username" />
+        <button onclick="addAvatar()">Upload</button>
+      </div>
+
+    </div>
+    
+  </div>
+
+
+  <div id="box"></div>
+  <script>
+    const box = document.getElementById("box");
+
+    // Load saved avatars on page load
+    window.onload = function () {
+      const saved = JSON.parse(localStorage.getItem("avatars")) || [];
+      saved.forEach(handle => createAvatar(handle));
+    };
+
+    function addAvatar() {
+      const handle = document.getElementById("handle").value.replace("@", "").trim();
+      if (!handle) return;
+
+      createAvatar(handle);
+
+      // Save to localStorage
+      const saved = JSON.parse(localStorage.getItem("avatars")) || [];
+      if (!saved.includes(handle)) {
+        saved.push(handle);
+        localStorage.setItem("avatars", JSON.stringify(saved));
+      }
+
+      document.getElementById("handle").value = "";
+    }
+
+    function removeAvatar(container, handle) {
+      container.remove();
+      let saved = JSON.parse(localStorage.getItem("avatars")) || [];
+      saved = saved.filter(h => h !== handle);
+      localStorage.setItem("avatars", JSON.stringify(saved));
+    }
+
+    function createAvatar(handle) {
+      const container = document.createElement("div");
+      container.className = "avatar-container";
+
+      const img = document.createElement("img");
+      img.src = `https://unavatar.io/twitter/${handle}`;
+      img.className = "avatar";
+      img.onerror = () => { img.style.display = "none"; };
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.innerText = "@" + handle;
+
+      container.appendChild(img);
+      container.appendChild(name);
+
+      // Random starting position
+      let x = Math.random() * (box.clientWidth - 100);
+      let y = Math.random() * (box.clientHeight - 100);
+
+      container.style.left = x + "px";
+      container.style.top = y + "px";
+      box.appendChild(container);
+
+      // Bounce animation
+      let dx = (Math.random() - 0.5) * 2;
+      let dy = (Math.random() - 0.5) * 2;
+      function move() {
+        x += dx;
+        y += dy;
+        if (x <= 0 || x + container.offsetWidth >= box.clientWidth) dx *= -1;
+        if (y <= 0 || y + container.offsetHeight >= box.clientHeight) dy *= -1;
+        container.style.left = x + "px";
+        container.style.top = y + "px";
+        requestAnimationFrame(move);
+      }
+      move();
+
+      // --- Click vs Double Click vs Long Press ---
+      let clickTimeout;
+      container.addEventListener("click", (e) => {
+        if (clickTimeout) return; // ignore if waiting for double click
+        clickTimeout = setTimeout(() => {
+          window.open(`https://twitter.com/${handle}`, "_blank");
+          clickTimeout = null;
+        }, 250); // wait 250ms to see if dblclick happens
+      });
+
+      container.addEventListener("dblclick", (e) => {
+        clearTimeout(clickTimeout);
+        clickTimeout = null;
+        removeAvatar(container, handle);
+      });
+
+      // Mobile long press
+      let pressTimer;
+      container.addEventListener("touchstart", () => {
+        pressTimer = setTimeout(() => {
+          clearTimeout(clickTimeout);
+          clickTimeout = null;
+          removeAvatar(container, handle);
+        }, 700); // hold 700ms
+      });
+      container.addEventListener("touchend", () => {
+        clearTimeout(pressTimer);
+      });
+    }
+  </script>
+
+
+</body>
+
+</html>
