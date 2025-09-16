@@ -23,10 +23,10 @@ const box = document.getElementById("box");
 const handleInput = document.getElementById("handle");
 const addBtn = document.getElementById("addBtn");
 
-// ✅ Hook up button to add avatar
+// Hook up button to add avatar
 addBtn.addEventListener("click", addAvatar);
 
-// ✅ Enter key support
+// Enter key support
 handleInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") addAvatar();
 });
@@ -61,9 +61,9 @@ function createAvatar(handle, key) {
   const margin = 20;
   let x = margin + Math.random() * (box.clientWidth - 80 - margin * 2);
   let y = margin + Math.random() * (box.clientHeight - 80 - margin * 2);
-
   container.style.left = x + "px";
   container.style.top = y + "px";
+
   box.appendChild(container);
 
   // Bounce animation
@@ -84,14 +84,32 @@ function createAvatar(handle, key) {
   }
   move();
 
-  // Click → open Twitter
-  container.addEventListener("click", () => {
-    window.open(`https://twitter.com/${handle}`, "_blank");
+  // Single click → open Twitter (with delay to prevent conflict with double-click)
+  let clickTimer = null;
+  container.addEventListener("click", (e) => {
+    e.preventDefault();
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(() => {
+      window.open(`https://twitter.com/${handle}`, "_blank");
+    }, 250); // 250ms delay
   });
 
   // Double click → remove globally
-  container.addEventListener("dblclick", () => {
-    remove(ref(db, "avatars/" + key));
+  container.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    clearTimeout(clickTimer); // Cancel single click action
+    
+    // Add visual feedback
+    container.style.opacity = "0.5";
+    container.style.transform = "scale(0.9)";
+    
+    // Remove from Firebase
+    remove(ref(db, "avatars/" + key)).catch((error) => {
+      console.error("Error removing avatar:", error);
+      // Restore visual state if removal failed
+      container.style.opacity = "1";
+      container.style.transform = "scale(1)";
+    });
   });
 }
 
@@ -106,5 +124,14 @@ onChildAdded(avatarsRef, (snapshot) => {
 onChildRemoved(avatarsRef, (snapshot) => {
   const key = snapshot.key;
   const el = document.querySelector(`.avatar-container[data-key="${key}"]`);
-  if (el) el.remove();
+  if (el) {
+    // Add fade out animation before removal
+    el.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+    el.style.opacity = "0";
+    el.style.transform = "scale(0.8)";
+    
+    setTimeout(() => {
+      el.remove();
+    }, 300);
+  }
 });

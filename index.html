@@ -18,7 +18,7 @@ html, body {
   width: 100%;
   height: 100%;
 }
-  
+
 
 * {
   box-sizing: border-box;
@@ -34,6 +34,9 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  overflow: auto; /* Change from hidden to auto */
+    height: auto; /* Allow natural height */
+    min-height: 100vh;
 }
 
 /* Background */
@@ -51,8 +54,9 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   padding: 15px;
+  height: auto; /* Change from 100vh to auto */
+    min-height: 100vh; /* Ensure minimum height */
 }
 
 /* Header */
@@ -66,8 +70,8 @@ body {
 }
 
 .header img {
-  width: 50px;
-  height: 50px;
+  width: 15rem;
+  height: 3.5rem;
 }
 
 .header_text h1 {
@@ -122,10 +126,12 @@ button:active { transform: scale(0.98); }
   border: 3px solid #6b46c1;
   border-radius: 15px;
   position: relative;
-  overflow-y: auto;   /* makes it scrollable if content is tall */
-  max-height: 70vh;   /* prevents it from taking full screen */
+  overflow: hidden;
   padding: 10px;
-  height: 500px; 
+  /* Make it fill remaining viewport space */
+  flex: 1; /* If container is flexbox */
+  height: 0; /* Reset height when using flex */
+  min-height: 0; /* Reset min-height */
   background: rgba(0, 0, 0, 0.5);
 }
 
@@ -144,7 +150,7 @@ button:active { transform: scale(0.98); }
 .avatar-container:hover { transform: scale(1.1); }
 
 .avatar {
-  width: 7rem;
+  width: 7.2rem;
   height: 8rem;
   border: 1px solid black (255, 255, 255, 0.8);
   border-radius: 6px;
@@ -161,6 +167,20 @@ button:active { transform: scale(0.98); }
   padding: 4px 8px;
   border-radius: 12px;
   white-space: nowrap;
+}
+.credit{
+  color: whitesmoke;
+  text-align: center;
+  margin-top: 5px;
+
+}
+.credit a{
+text-decoration: none;
+background-color: rgba(0, 0, 0, 0.5);
+padding: 4px;
+border-radius: 40%;
+color: rgb(249, 231, 198);
+
 }
 
 /* Mobile landscape */
@@ -179,8 +199,14 @@ button:active { transform: scale(0.98); }
   .avatar { width: 7.7rem; height: 8.5rem; }
   .name { font-size: 11px; }
   .header img{ 
-    width: 13rem;
+    width: 13.5rem;
     height: 4rem;
+  }
+  #box{
+    height: auto; /* Change from fixed 600px */
+    min-height: 30rem; /* Minimum height for content */
+    max-height: none; 
+    margin-bottom: 10px;
   }
 
 }
@@ -196,8 +222,8 @@ button:active { transform: scale(0.98); }
 @media (hover: none) and (pointer: coarse) {
   .avatar-container:hover { transform: none; }
   .avatar-container:active { transform: scale(0.95); }
-  button:hover { background: #1da1f2; }
-  button:active { background: #1991db; }
+  button:hover { background: #6b46c1; }
+  button:active { background: #6b46c1; }
 }
 
 /* Dark mode support */
@@ -233,6 +259,10 @@ button:active { transform: scale(0.98); }
     </div>
 
     <div id="box"></div>
+
+    <div class="credit">
+      <h4>Built by <a href="https://x.com/segun__alao">Greatness</a></h4>
+    </div>
     
   </div>
   <script type="module" src="./app.js"></script>
