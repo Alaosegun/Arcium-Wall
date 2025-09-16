@@ -3,135 +3,242 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Floating Twitter Wall</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Encrypted Wall</title>
 
+</head>
+<style>
+  /* Base styles for all devices */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+  
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Background */
+.background-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Flex container */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 15px;
+}
+
+/* Header */
+.header {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+}
+
+.header img {
+  width: 50px;
+  height: 50px;
+}
+
+.header_text h1 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* Inputs */
+.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.inputbox {
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(186, 186, 186, 0.9);
+  font-size: 16px;
+  width: 100%;
+}
+
+.inputbox:focus {
+  outline: 2px solid black;
+  background: white;
+}
+
+button {
+  padding: 14px;
+  background: #6b46c1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 21rem;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:hover { background: #5838a4; }
+button:active { transform: scale(0.98); }
+
+/* The Box */
+#box {
+  margin-top: 15px;
+  border: 3px solid #6b46c1;
+  border-radius: 15px;
+  position: relative;
+  overflow-y: auto;   /* makes it scrollable if content is tall */
+  max-height: 70vh;   /* prevents it from taking full screen */
+  padding: 10px;
+  height: 500px; 
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Avatar styling */
+.avatar-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.avatar-container:hover { transform: scale(1.1); }
+
+.avatar {
+  width: 7rem;
+  height: 8rem;
+  border: 1px solid black (255, 255, 255, 0.8);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.name {
+  margin-top: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+/* Mobile landscape */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+  .header_text h1 { font-size: 1.5rem; }
+  .inputbox { font-size: 14px; padding: 10px 12px; }
+  button { font-size: 14px; padding: 10px; }
+  .avatar { width: 50px; height: 50px; }
+  .name { font-size: 12px; }
+ 
+}
+
+/* Small mobile devices */
+@media screen and (max-width: 480px) {
+  .header_text h1 { font-size: 2.5rem; }
+  .avatar { width: 7.7rem; height: 8.5rem; }
+  .name { font-size: 11px; }
+  .header img{ 
+    width: 13rem;
+    height: 4rem;
+  }
+
+}
+
+/* Very small devices */
+@media screen and (max-width: 360px) {
+  .header_text h1 { font-size: 1rem; }
+  .avatar { width: 6.7rem; height: 7.5rem; }
+  .name { font-size: 10px; }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .avatar-container:hover { transform: none; }
+  .avatar-container:active { transform: scale(0.95); }
+  button:hover { background: #1da1f2; }
+  button:active { background: #1991db; }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .inputbox {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  .inputbox::placeholder { color: rgba(255, 255, 255, 0.7); }
+  .inputbox:focus { background: rgba(255, 255, 255, 0.2); }
+}
+
+</style>
 <body>
   <video autoplay muted loop playsinline class="background-video">
     <source src="./67086aa28c40f80ff00c0af1_Homepage Hero-transcode.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
-  <div id="form">
-    <div class="logo">
-      <img src="./Screenshot 2025-09-12 at 10.49.46 PM.png" alt="">
-    </div>
-    <div class="header_text">
-      <h2>&lt;ENCRYPTED&gt; WALL</h2>
+  <div class="container">
+    <div class="header">
       <div>
-        <input id="handle" type="text" placeholder="@username" />
-        <button onclick="addAvatar()">Upload</button>
+        <img src="./Screenshot 2025-09-12 at 10.49.46 PM.png" alt="Logo">
       </div>
-
+      
+      <div class="header_text">
+        <h1>&lt;Encrypted&gt; wall</h1>
+        <div class="inputs">
+          <input type="text" id="handle" class="inputbox" placeholder="Enter Twitter handle">
+          <button id="addBtn">Upload</button>
+        </div>
+      </div>
     </div>
+
+    <div id="box"></div>
     
   </div>
-
-
-  <div id="box"></div>
-  <script>
-    const box = document.getElementById("box");
-
-    // Load saved avatars on page load
-    window.onload = function () {
-      const saved = JSON.parse(localStorage.getItem("avatars")) || [];
-      saved.forEach(handle => createAvatar(handle));
-    };
-
-    function addAvatar() {
-      const handle = document.getElementById("handle").value.replace("@", "").trim();
-      if (!handle) return;
-
-      createAvatar(handle);
-
-      // Save to localStorage
-      const saved = JSON.parse(localStorage.getItem("avatars")) || [];
-      if (!saved.includes(handle)) {
-        saved.push(handle);
-        localStorage.setItem("avatars", JSON.stringify(saved));
-      }
-
-      document.getElementById("handle").value = "";
-    }
-
-    function removeAvatar(container, handle) {
-      container.remove();
-      let saved = JSON.parse(localStorage.getItem("avatars")) || [];
-      saved = saved.filter(h => h !== handle);
-      localStorage.setItem("avatars", JSON.stringify(saved));
-    }
-
-    function createAvatar(handle) {
-      const container = document.createElement("div");
-      container.className = "avatar-container";
-
-      const img = document.createElement("img");
-      img.src = `https://unavatar.io/twitter/${handle}`;
-      img.className = "avatar";
-      img.onerror = () => { img.style.display = "none"; };
-
-      const name = document.createElement("div");
-      name.className = "name";
-      name.innerText = "@" + handle;
-
-      container.appendChild(img);
-      container.appendChild(name);
-
-      // Random starting position
-      let x = Math.random() * (box.clientWidth - 100);
-      let y = Math.random() * (box.clientHeight - 100);
-
-      container.style.left = x + "px";
-      container.style.top = y + "px";
-      box.appendChild(container);
-
-      // Bounce animation
-      let dx = (Math.random() - 0.5) * 2;
-      let dy = (Math.random() - 0.5) * 2;
-      function move() {
-        x += dx;
-        y += dy;
-        if (x <= 0 || x + container.offsetWidth >= box.clientWidth) dx *= -1;
-        if (y <= 0 || y + container.offsetHeight >= box.clientHeight) dy *= -1;
-        container.style.left = x + "px";
-        container.style.top = y + "px";
-        requestAnimationFrame(move);
-      }
-      move();
-
-      // --- Click vs Double Click vs Long Press ---
-      let clickTimeout;
-      container.addEventListener("click", (e) => {
-        if (clickTimeout) return; // ignore if waiting for double click
-        clickTimeout = setTimeout(() => {
-          window.open(`https://twitter.com/${handle}`, "_blank");
-          clickTimeout = null;
-        }, 250); // wait 250ms to see if dblclick happens
-      });
-
-      container.addEventListener("dblclick", (e) => {
-        clearTimeout(clickTimeout);
-        clickTimeout = null;
-        removeAvatar(container, handle);
-      });
-
-      // Mobile long press
-      let pressTimer;
-      container.addEventListener("touchstart", () => {
-        pressTimer = setTimeout(() => {
-          clearTimeout(clickTimeout);
-          clickTimeout = null;
-          removeAvatar(container, handle);
-        }, 700); // hold 700ms
-      });
-      container.addEventListener("touchend", () => {
-        clearTimeout(pressTimer);
-      });
-    }
-  </script>
-
+  <script type="module" src="./app.js"></script>
 
 </body>
 
 </html>
+
+
